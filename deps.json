@@ -1,0 +1,9 @@
+{
+    "src/thirdparty/glog":[
+        {
+            "repository":"git@github.com:ztchu/glog.git",
+            "commit_id":"ba8a9f6952d04d1403b97df24e6836227751454e",
+            "checkout_condition":"all"
+        }
+    ]
+}
