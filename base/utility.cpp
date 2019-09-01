@@ -1,4 +1,4 @@
-#include "Utility.h"
+#include "utility.h"
 
 #include <direct.h>
 #include <fstream>
@@ -87,3 +87,10 @@ bool Utility::InitializeLogger(const std::string& path) {
     return true;
 }
 #endif
+
+int64_t Utility::GetMilliSecTimestamp() {
+    std::chrono::milliseconds ms = 
+        std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::system_clock::now().time_since_epoch());
+    return ms.count();
+}
