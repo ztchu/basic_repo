@@ -9,6 +9,10 @@ option(ENABLE_GLOG "Enable glog" OFF)
 option(ENABLE_TEST "Enable test" OFF)
 option(ENABLE_THREAD_POOL "Enable thread pool" ON)
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
+
 if(ENABLE_TEST)
     add_definitions(-DENABLE_TEST)
 endif()
@@ -34,7 +38,8 @@ list(APPEND SRCS
 if(ENABLE_THREAD_POOL)
     list(APPEND SRCS
         ./base/thread/simple_thread_pool.cpp
-        ./base/thread/simple_thread_pool.h)
+        ./base/thread/simple_thread_pool.h
+        ./base/thread/thread_pool.h)
     if(ENABLE_TEST)
         list(APPEND SRCS
             ./base/thread/thread_pool_test.cpp

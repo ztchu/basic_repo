@@ -13,12 +13,14 @@ typedef std::function<void()> Task;
 
 class SimpleThreadPool {
 public:
-    SimpleThreadPool(unsigned int number_of_threads_);
+    SimpleThreadPool(unsigned int number_of_threads);
     ~SimpleThreadPool();
     void CommitTask(Task&& task);
 
     void StartThreadPool();
     void CloseThreadPool();
+
+    size_t GetThreadsNumber() const;
 
 private:
     void Run();
@@ -32,4 +34,6 @@ private:
 
     std::atomic<bool> is_running_;
     std::atomic<bool> is_task_queue_empty_;
+
+    size_t number_of_threads_;
 };

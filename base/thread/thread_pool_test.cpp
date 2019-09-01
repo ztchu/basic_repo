@@ -8,48 +8,39 @@
 
 ThreadPoolTest::ThreadPoolTest() {
     thread_pool_.reset(new SimpleThreadPool(4));
+    pool_.reset(new ThreadPool(4));
 }
 
-void ThreadPoolTest::ThreadPoolTest::DoworkConcurrent() {
+void ThreadPoolTest::DoworkSequential(int num) {
     int64_t start_time = Utility::GetMilliSecTimestamp();
-    for (int i = 0; i < 10; ++i) {
-        thread_pool_->CommitTask(std::bind(&ThreadPoolTest::SumNumber, this, 10000));
-    }
+    ans_ = SumNumber(0, num);
     std::cout << "The answer: " << ans_;
-    std::cout << "Total time in milli seconds: " << Utility::GetMilliSecTimestamp()
+    std::cout << "Sequential total time in milli seconds: " << Utility::GetMilliSecTimestamp()
         - start_time << std::endl;
 }
 
-void ThreadPoolTest::DoworkSequential() {
-    int64_t start_time = Utility::GetMilliSecTimestamp();
-    for (int i = 0; i < 10; ++i) {
-        for (int j = 0; j < 10000; ++j) {
-            ans_ += i * 10000 + j;
-        }
-    }
-    std::cout << "The answer: " << ans_;
-    std::cout << "Total time in milli seconds: " << Utility::GetMilliSecTimestamp()
-        - start_time << std::endl;
-}
-
-void ThreadPoolTest::SumNumber(int num) {
+long long ThreadPoolTest::SumNumber(int start, int end) {
     std::cout << "SumNumber, thread number: " << std::this_thread::get_id();
     long long ans = 0;
-    for (int i = 0; i < num; ++i) {
+    for (int i = start; i < end; ++i) {
         ans += i;
     }
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-        ans_ += ans;
-    }
+    return ans;
 }
 
-// void ThreadPoolTest::PrintStr(int num) {
-//     std::cout << "PrintStr, thread number: " << std::this_thread::get_id();
-//     std::this_thread::sleep_for(std::chrono::seconds(2));
-//     /*for (int i = 0; i < num; ++i) {
-//         for (char a = 'a'; a <= 'z'; ++a) {
-//             std::cout << a << " ";
-//         }
-//     }*/
-// }
+void ThreadPoolTest::TestConcurrent(int number) {
+    int64_t start_time = Utility::GetMilliSecTimestamp();
+    size_t total_threads = pool_->GetThreadsNumber();
+    size_t offset = number / total_threads;
+    for (size_t i = 0; i < total_threads; ++i) {
+        ans_futures_.emplace_back(pool_->Enqueue(&ThreadPoolTest::SumNumber, this,
+            i * offset, ( i + 1) * offset < number ? (i + 1) * offset : number));
+    }
+
+    for (int i = 0; i < ans_futures_.size(); ++i) {
+        ans_ += ans_futures_[i].get();
+    }
+    std::cout << "ans: " << ans_ << std::endl;
+    std::cout << "Concurrent total time in milli seconds: " << Utility::GetMilliSecTimestamp()
+        - start_time << std::endl;
+}

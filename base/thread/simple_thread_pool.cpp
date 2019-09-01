@@ -4,12 +4,12 @@
 
 #include "logger.h"
 
-SimpleThreadPool::SimpleThreadPool(unsigned int number_of_threads_)
+SimpleThreadPool::SimpleThreadPool(unsigned int number_of_threads)
     :is_running_(true), is_task_queue_empty_(true) {
     try {
-        int max_quantity = std::max(number_of_threads_,
+        number_of_threads_ = std::max(number_of_threads,
             std::thread::hardware_concurrency());
-        for (int i = 0; i < max_quantity; ++i) {
+        for (int i = 0; i < number_of_threads_; ++i) {
             thread_pool_.push_back(std::thread(&SimpleThreadPool::Run, this));
         }
     } catch(...) {
@@ -45,6 +45,10 @@ void SimpleThreadPool::StartThreadPool() {
 
 void SimpleThreadPool::CloseThreadPool() {
     is_running_.store(false);
+}
+
+size_t SimpleThreadPool::GetThreadsNumber() const {
+    return number_of_threads_;
 }
 
 void SimpleThreadPool::Run() {
