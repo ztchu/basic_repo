@@ -5,5 +5,12 @@
             "commit_id":"ba8a9f6952d04d1403b97df24e6836227751454e",
             "checkout_condition":"all"
         }
+    ],
+    "src/thirdparty/ffmpeg":[
+        {
+            "repository":"https://github.com/ztchu/FFmpeg.git",
+            "commit_id":"75384bc464411fb2291105dca84b8bc411188350",
+            "checkout_condition":"all"
+        }
     ]
 }

@@ -9,6 +9,10 @@ option(ENABLE_GLOG "Enable glog" OFF)
 option(ENABLE_TEST "Enable test" OFF)
 option(ENABLE_THREAD_POOL "Enable thread pool" ON)
 
+# FFMPEG_SH = ./buildtools/win/ffmpeg_build.sh
+execute_process(COMMAND sh ./buildtools/win/ffmpeg_build.sh)
+# message("ffmpeg shell" ${FFMPEG_SH})
+
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
